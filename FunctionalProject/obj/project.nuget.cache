@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "tVPYSTQ/4J7n1luoLKvBxx0Jjr6wBRL2fNE9NvoD05CHd5g0IGBb5cnWm3KB5jyX60Ve6+e2C98E1pDo3rQM1g==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\SaltO\\Desktop\\FunctionalProject\\FunctionalProject.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\SaltO\\.nuget\\packages\\fsharp.core\\5.0.0\\fsharp.core.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
