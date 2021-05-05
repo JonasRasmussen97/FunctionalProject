@@ -6,6 +6,8 @@
   <ItemGroup>
     <Compile Include="Program.fs" />
     <Compile Include="Model.fs" />
+    <Compile Include="modelbased.fs" />
+    <Compile Include="new.fsx" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FsCheck" Version="2.15.2" />

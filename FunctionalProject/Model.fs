@@ -1,7 +1,7 @@
-namespace Model
 #r "nuget: Http.fs"
 open HttpFs.Client
 open Hopac
+#r "nuget: FsCheck"
 open FsCheck
 module OrbitModel = 
 // Defines a file type as it is according to the Orbit API.
@@ -56,9 +56,11 @@ let files = Map.empty
 let users = Map.empty.Add(0, new User(0, "Bypass authorization", "")).Add(100, new User(100, "Reader/Writer", "rw")).Add(101, new User(101, "Reader", "ro")).Add(102, new User(102, "None", "none"));;
 
 let response = Request.createUrl Get "http://localhost:8085/file/list?userId=100" |> HttpFs.Client.getResponse |> run;;
+
+
 // Class definition of the API
 type API() = 
-    member __.getFiles() = let response = Request.createUrl Get "http://localhost:8085/file/list?userId=100" |> HttpFs.Client.getResponse |> run;;
+    member __.getFiles() = Request.createUrl Get "http://localhost:8085/file/list?userId=100" |> HttpFs.Client.getResponse |> run;;
     
 
 
