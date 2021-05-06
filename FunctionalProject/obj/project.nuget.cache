@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "tsZ5AE2hvrP+xIshbcAG+nWfnmfKnqtU9uc4xWcLjxT22XnDQ6mIqfgGdyORMxjFB30AAUqf4qBVxlOdSjei4Q==",
+  "dgSpecHash": "W39PRsGR6jWxXdXTxzJbwqWu97JvmwhN/cxMDpaA9KQwYLu/vtVDLkoxC39EmSP4Hr42FgKWCIWyOXucza18Fw==",
   "success": true,
   "projectFilePath": "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj",
   "expectedPackageFiles": [
     "C:\\Users\\SaltO\\.nuget\\packages\\fscheck\\2.15.2\\fscheck.2.15.2.nupkg.sha512",
     "C:\\Users\\SaltO\\.nuget\\packages\\fsharp.core\\5.0.0\\fsharp.core.5.0.0.nupkg.sha512",
+    "C:\\Users\\SaltO\\.nuget\\packages\\fsharp.data\\4.1.1\\fsharp.data.4.1.1.nupkg.sha512",
+    "C:\\Users\\SaltO\\.nuget\\packages\\fsharp.json\\0.4.0\\fsharp.json.0.4.0.nupkg.sha512",
     "C:\\Users\\SaltO\\.nuget\\packages\\hopac\\0.3.23\\hopac.0.3.23.nupkg.sha512",
     "C:\\Users\\SaltO\\.nuget\\packages\\http.fs\\5.4.0\\http.fs.5.4.0.nupkg.sha512",
     "C:\\Users\\SaltO\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",

@@ -3,8 +3,9 @@ open HttpFs.Client
 open Hopac
 #r "nuget: FsCheck"
 open FsCheck
-
-
+open System.Text.Json
+#r "nuget: FSharp.Data"
+open FSharp.Data
 
 type File = 
     struct
@@ -52,8 +53,9 @@ type User =
 let files = [Map.empty.
 Add(2, new File(2, "README.txt", "78", "text/plain", 15, 1, "2021-02-19T15:20:35.702Z", "2021-02-19T15:20:35.702Z", "637479675580000000", "server-files/Users/rw/README.txt", false)).
 Add(3, new File(3, "README.txt", "78", "text/plain", 16, 1, "2021-02-19T15:20:35.704Z", "2021-02-19T15:20:35.704Z", "637479675580000000", "server-files/Users/ro/README.txt", false)).
-Add(4, new File(4, "INTRO.txt", "184", "text/plain", 9, 1, "2021-02-19T15:20:35.705Z", "2021-02-19T15:20:35.705Z", "637479675580000000", "server-files/Shared files/INTRO.txt", false)).
+Add(4, new File(4, "INTRO.txt", "184", "text/plain", 9, 1, "2021-02-19T15:20:35.705Z", "2021-02-19T15:20:35.705Z", "637479675580000000", "server-files/Shared files/INTRO.txt", false))
 ];;
+
 let directories = [Map.empty.
 Add(1, new Orbit_Directory(1, "server-files", "server-files/", 1, 0, false, false)).
 Add(2, new Orbit_Directory(2, "Projects", "server-files/Projects/", 1, 1, false, false)).
@@ -77,6 +79,7 @@ Add(19, new Orbit_Directory(19, "none", "server-files/Users/none/", 1, 14, false
 Add(20, new Orbit_Directory(20, "Delete me","server-files/Shared files/Delete me/", 1, 9, false, false)).
 Add(21, new Orbit_Directory(21, "Delete me too", "server-files/File importer/Delete me too/", 1, 13, false, false))
 ];;
+
 let users = [Map.empty.
 Add(0, new User(0, "Bypass authorization", "")).
 Add(100, new User(100, "Reader/Writer", "rw")).
@@ -85,41 +88,46 @@ Add(102, new User(102, "None", "none"))
 ];;
 
 
+
 // Test for get file list.
 let getFileListResponse() = 
     Request.createUrl Get "http://localhost:8085/file/list?userId=100"
     |> HttpFs.Client.getResponse
     |> run;;
 
-let getSpecificFileResponse() = 
+let getSpecificFileResponse = 
     Request.createUrl Get "http://localhost:8085/file/meta?userId=100&id=2"
     |> HttpFs.Client.getResponse
     |> run;;
 
-type API() = 
-    member __.getFiles() = getFileListResponse().statusCode   
-    member __.getSpecificFile() = getSpecificFileResponse().statusCode;;
- 
+type API_File_Json = JsonProvider<"http://localhost:8085/file/meta?userId=0&id=2">
+let API_File = API_File_Json.Load("http://localhost:8085/file/meta?userId=0&id=2")
 
+
+// Generates a random file id to be used. Needs to be added to the model & the api.
+let fileIdGenerator() = Gen.choose(2, 4) |> Gen.sample 0 1 |> Seq.exactlyOne;;
+
+type API() =
+    member __.getFiles() = getFileListResponse().statusCode   
+    member __.getSpecificFile() = API_File_Json.Load("http://localhost:8085/file/meta?userId=0&id=2")
 
   let spec =
   let getFiles = { new Command<API, int>() with
-                    override __.RunActual api = api.getFiles(); api
-                    override __.RunModel m = 200
-                    override __.Post(api, m) = api.getFiles() = m |@ sprintf "model: %i <> %A" m api
-                    override __.ToString() = "getFiles" }     
-  let readFile = {new Command<API, int>() with 
-                    override __.RunActual api = api.getSpecificFile(); api
-                    override __.RunModel m = 200
-                    override __.Post(api, m) = api.getSpecificFile() = m |@ sprintf "model: %i <> %A" m api
-                    override __.ToString() = "readFile" }     
+                    // Here we retrieve the id of the API file.
+                    override __.RunActual api = api.getSpecificFile().Id; api
+                    // Here we retrieve the id of the Model file.
+                    override __.RunModel fileId = (files.Head.Item (2)).id
+                    // Here we match the two id's to see if the states of both the api and the model are equal.
+                    override __.Post(api, fileId ) = api.getSpecificFile().Id = fileId  |@ sprintf "model: %i <> %A" fileId api
+                    // Print actual and model.
+                    override __.ToString() = "Operation: GetFile" + " " + "Value: " + (string 2) }                      
   { new ICommandGenerator<API,int> with
       member __.InitialActual = API()
       member __.InitialModel = 0
-      member __.Next model = Gen.elements [getFiles; readFile]};;
+      member __.Next model = Gen.elements [getFiles]};;
 
   
-Check.One({Config.Verbose with MaxTest = 10;}, Command.toProperty spec);;
+Check.One({Config.Verbose with MaxTest = 2;}, Command.toProperty spec);;
 
 
       

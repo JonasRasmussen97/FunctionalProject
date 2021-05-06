@@ -64,6 +64,30 @@
           }
         }
       },
+      "FSharp.Data/4.1.1": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.7.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/FSharp.Data.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/FSharp.Data.dll": {}
+        }
+      },
+      "FSharp.Json/0.4.0": {
+        "type": "package",
+        "dependencies": {
+          "FSharp.Core": "4.6.2"
+        },
+        "compile": {
+          "lib/netstandard2.0/FSharp.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/FSharp.Json.dll": {}
+        }
+      },
       "Hopac/0.3.23": {
         "type": "package",
         "dependencies": {
@@ -1281,6 +1305,34 @@
         "lib/netstandard2.0/tr/FSharp.Core.resources.dll",
         "lib/netstandard2.0/zh-Hans/FSharp.Core.resources.dll",
         "lib/netstandard2.0/zh-Hant/FSharp.Core.resources.dll"
+      ]
+    },
+    "FSharp.Data/4.1.1": {
+      "sha512": "HSUUWS1CE8m9Qfr0V/ujVHV/0HqyYeJaLAHFShlgcZXhNezfMJWnXqLaDKmGlesyT5to3crKynW/rykfIj/XSw==",
+      "type": "package",
+      "path": "fsharp.data/4.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fsharp.data.4.1.1.nupkg.sha512",
+        "fsharp.data.nuspec",
+        "lib/netstandard2.0/FSharp.Data.dll",
+        "lib/netstandard2.0/FSharp.Data.xml",
+        "logo.png",
+        "typeproviders/fsharp41/netstandard2.0/FSharp.Data.DesignTime.deps.json",
+        "typeproviders/fsharp41/netstandard2.0/FSharp.Data.DesignTime.dll"
+      ]
+    },
+    "FSharp.Json/0.4.0": {
+      "sha512": "3QchEhViQdnvJQzVG7M/CIgdCZhDJw4ZzFKMfLqb/j1cucxcUcXvIMxf6rV0ktFn9mmkmw9WOOuIsrG012vkUg==",
+      "type": "package",
+      "path": "fsharp.json/0.4.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "fsharp.json.0.4.0.nupkg.sha512",
+        "fsharp.json.nuspec",
+        "lib/netstandard2.0/FSharp.Json.dll"
       ]
     },
     "Hopac/0.3.23": {
@@ -4463,6 +4515,8 @@
   "projectFileDependencyGroups": {
     "net5.0": [
       "FSharp.Core >= 5.0.0",
+      "FSharp.Data >= 4.1.1",
+      "FSharp.Json >= 0.4.0",
       "FsCheck >= 2.15.2",
       "Hopac >= 0.3.23",
       "Http.fs >= 5.4.0"
@@ -4510,6 +4564,15 @@
           "FSharp.Core": {
             "target": "Package",
             "version": "[5.0.0, )",
+            "generatePathProperty": true
+          },
+          "FSharp.Data": {
+            "target": "Package",
+            "version": "[4.1.1, )"
+          },
+          "FSharp.Json": {
+            "target": "Package",
+            "version": "[0.4.0, )",
             "generatePathProperty": true
           },
           "FsCheck": {
