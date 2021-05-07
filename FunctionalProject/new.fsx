@@ -89,7 +89,7 @@ Add(102, new User(102, "None", "none"))
 
 
 
-// Test for get file list.
+// Test for get file list using the Http.Fs library
 let getFileListResponse() = 
     Request.createUrl Get "http://localhost:8085/file/list?userId=100"
     |> HttpFs.Client.getResponse
@@ -100,16 +100,18 @@ let getSpecificFileResponse =
     |> HttpFs.Client.getResponse
     |> run;;
 
+// Using FsSharp.Data library to create an object from JSON (API_File)
 type API_File_Json = JsonProvider<"http://localhost:8085/file/meta?userId=0&id=2">
 let API_File = API_File_Json.Load("http://localhost:8085/file/meta?userId=0&id=2")
 
 
-// Generates a random file id to be used. Needs to be added to the model & the api.
+// Custom generator: Generates a random file id to be used. Needs to be added to the model & the api.
 let fileIdGenerator() = Gen.choose(2, 4) |> Gen.sample 0 1 |> Seq.exactlyOne;;
 
 type API() =
     member __.getFiles() = getFileListResponse().statusCode   
     member __.getSpecificFile() = API_File_Json.Load("http://localhost:8085/file/meta?userId=0&id=2")
+
 
   let spec =
   let getFiles = { new Command<API, int>() with
@@ -124,9 +126,10 @@ type API() =
   { new ICommandGenerator<API,int> with
       member __.InitialActual = API()
       member __.InitialModel = 0
+      // List of commands e.g. [getFiles; createFile...]
       member __.Next model = Gen.elements [getFiles]};;
 
-  
+// Performing checks contained by "spec" ICommandGenerator
 Check.One({Config.Verbose with MaxTest = 2;}, Command.toProperty spec);;
 
 
