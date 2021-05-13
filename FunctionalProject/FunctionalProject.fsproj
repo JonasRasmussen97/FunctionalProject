@@ -4,10 +4,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Program.fs" />
-    <Compile Include="Model.fs" />
-    <Compile Include="modelbased.fs" />
-    <Compile Include="new.fsx" />
+    <Compile Include="API.fsx" />
+    <Compile Include="Model.fsx" />
+    <Compile Include="Testing.fsx" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FsCheck" Version="2.15.2" />

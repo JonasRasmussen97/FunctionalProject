@@ -21,6 +21,7 @@
     <PkgHopac Condition=" '$(PkgHopac)' == '' ">C:\Users\SaltO\.nuget\packages\hopac\0.3.23</PkgHopac>
     <PkgHttp_fs Condition=" '$(PkgHttp_fs)' == '' ">C:\Users\SaltO\.nuget\packages\http.fs\5.4.0</PkgHttp_fs>
     <PkgFSharp_Json Condition=" '$(PkgFSharp_Json)' == '' ">C:\Users\SaltO\.nuget\packages\fsharp.json\0.4.0</PkgFSharp_Json>
+    <PkgFSharp_Data Condition=" '$(PkgFSharp_Data)' == '' ">C:\Users\SaltO\.nuget\packages\fsharp.data\4.1.1</PkgFSharp_Data>
     <PkgFsCheck Condition=" '$(PkgFsCheck)' == '' ">C:\Users\SaltO\.nuget\packages\fscheck\2.15.2</PkgFsCheck>
   </PropertyGroup>
 </Project>
