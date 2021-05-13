@@ -13,7 +13,7 @@ namespace Project
         // Customer generator that creates files.
         let fileGenerator() = Arb.generate<Model.File>|> Gen.nonEmptyListOf |> Gen.sample 0 1 |> Seq.exactlyOne
         // Generates a random string.
-        let stringGenerator() = Arb.generate<NonEmptyString>|> Gen.sample 0 1
+        let stringGenerator() = Arb.generate<NonEmptyString>|> Gen.sample 100 1
         
         
         // API Operations.
