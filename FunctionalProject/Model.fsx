@@ -1,84 +1,53 @@
 namespace Project
     module Model =
 
-        type File = 
-            struct
-            val id: int
-            val name: string
-            val size: string
-            val mimetype: string
-            val parent_id: int
-            val version: int
-            val created_at: string
-            val modified_at: string
-            val ms_timestamp: string
-            val path: string
-            val snapshots_enabled: bool
-
-            // Defines the constructor.
-            new (id, name, size, mimetype, parent_id, version, created_at, modified_at, ms_timestamp, path, snapshots_enabled) = {id = id; name = name; size = size; mimetype = mimetype; parent_id = parent_id; version = version; created_at = created_at;
-             modified_at = modified_at; ms_timestamp = ms_timestamp; path = path; snapshots_enabled = snapshots_enabled;}
-        end
-
-        // Defines a Directory type as it is according to the Orbit API.
-        type Orbit_Directory = 
-            struct 
-            val id: int
-            val name: string
-            val path: string
-            val version: int
-            val parent_id: int
-            val is_checked_out: bool
-            val is_default: bool
+        // Defines the structure of a file.
+        type File = { id: int; version: int; versionChanged: int; name: string; parentId: int; timestamp: string; }
+        // Required as the parent_id is another record.
+        type directoryParent = {id: int}
+        // Defines the structure of a directory.
+        type OrbitDirectory = {id: int; name: string; path: string; version: int; parent_id: directoryParent; is_checked_out: bool; is_default: bool}
+        // Defines a file response from the service part of the API.
+        type ServiceFile = {id: int; name: string; size: string; mimetype: string; parent_id: directoryParent; version: int; created_at: string; modified_at: string; ms_timestamp: string; path: string; snapshots_enabled: bool}
+        // Defines the structure of a user.
+        type User = {id: int; name: string; initials: string}
         
-            // Defines the constructor.
-            new (id, name, path, version, parent_id, is_checked_out, is_default) = {id = id; name = name; path=path; parent_id=parent_id; version=version; is_checked_out = is_checked_out; is_default = is_default}
-        end
-
-        // Defines a user type as it is according to the Orbit API.
-        type User = 
-            struct
-            val id: int
-            val name: string
-            val initials: string
-            
-            // Defines the constructor.
-            new (id, name, initials) = {id = id; name = name; initials = initials;}
-        end
-
+       
+        
+        // All files NOT from the service request, they follow another format.
         let files = [Map.empty.
-        Add(2, new File(2, "README.txt", "78", "text/plain", 15, 1, "2021-02-19T15:20:35.702Z", "2021-02-19T15:20:35.702Z", "637479675580000000", "server-files/Users/rw/README.txt", false)).
-        Add(3, new File(3, "README.txt", "78", "text/plain", 16, 1, "2021-02-19T15:20:35.704Z", "2021-02-19T15:20:35.704Z", "637479675580000000", "server-files/Users/ro/README.txt", false)).
-        Add(4, new File(4, "INTRO.txt", "184", "text/plain", 9, 1, "2021-02-19T15:20:35.705Z", "2021-02-19T15:20:35.705Z", "637479675580000000", "server-files/Shared files/INTRO.txt", false))
+        Add(2, {id=2; version=1; versionChanged=1; name="README.txt"; parentId=15; timestamp="637479675580000000"}).
+        Add(3, {id=3; version=1; versionChanged=1; name="README.txt"; parentId=16; timestamp="637479675580000000"}).
+        Add(4, {id=4; version=1; versionChanged=1; name="INTRO.txt"; parentId=9; timestamp="637479675580000000"})
         ]
 
         let directories = [Map.empty.
-        Add(1, new Orbit_Directory(1, "server-files", "server-files/", 1, 0, false, false)).
-        Add(2, new Orbit_Directory(2, "Projects", "server-files/Projects/", 1, 1, false, false)).
-        Add(3, new Orbit_Directory(3, "Project deliverables", "server-files/Project deliverables/", 1, 1, false, false)).
-        Add(4, new Orbit_Directory(4, "Project Templates", "server-files/Project Templates/", 1, 1, false, false)).
-        Add(5, new Orbit_Directory(5, "Standard - 1", "server-files/Project Templates/Standard - 1/", 1, 4, false, false)).
-        Add(6, new Orbit_Directory(6, "deliverables", "server-files/Project Templates/Standard - 1/deliverables/", 1, 5, false, false)).
-        Add(7, new Orbit_Directory(7, "explorer_root", "server-files/Project Templates/Standard - 1/explorer_root/", 1, 5, false, false)).
-        Add(8, new Orbit_Directory(8, "Project emails", "server-files/Project emails/", 1, 1, false, false)).
-        Add(9, new Orbit_Directory(9, "Shared files", "server-files/Shared files/", 1, 1, false, false)).
-        Add(10, new Orbit_Directory(10, "Companies", "server-files/Companies/", 1, 1, false, false)).
-        Add(11, new Orbit_Directory(11, "snapshots", "server-files/snapshots/", 1, 1, false, false)).
-        Add(12, new Orbit_Directory(12, "Sales Activities", "server-files/Sales Activities/", 1, 1, false, false)).
-        Add(13, new Orbit_Directory(13, "File importer", "server-files/File importer/", 1, 1, false, false)).
-        Add(14, new Orbit_Directory(14, "Users", "server-files/Users/", 1, 1, false, false)).
-        Add(15, new Orbit_Directory(15, "rw", "server-files/Users/rw/", 1, 14, false, false)).
-        Add(16, new Orbit_Directory(16, "ro", "server-files/Users/ro/", 1, 14, false, false)).
-        Add(17, new Orbit_Directory(17, "Project 1", "server-files/Projects/Project 1/", 1, 2, false, false)).
-        Add(18, new Orbit_Directory(18, "Project 2", "server-files/Projects/Project 2/", 1, 2, false, false)).
-        Add(19, new Orbit_Directory(19, "none", "server-files/Users/none/", 1, 14, false, false)).
-        Add(20, new Orbit_Directory(20, "Delete me","server-files/Shared files/Delete me/", 1, 9, false, false)).
-        Add(21, new Orbit_Directory(21, "Delete me too", "server-files/File importer/Delete me too/", 1, 13, false, false))
+        Add(1, {id=1; name="server-files"; path="server-files/"; version=1; parent_id={id=0}; is_checked_out=false; is_default=false}).
+        Add(2, {id=2; name="Projects"; path="server-files/Projects/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(3, {id=3; name="Project deliverables"; path="server-files/Project deliverables/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(4, {id=4; name="Project Templates"; path="server-files/Project Templates/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(5, {id=5; name="Standard - 1"; path="server-files/Project Templates/Standard - 1/"; version=1; parent_id={id=4}; is_checked_out=false; is_default=false}).
+        Add(6, {id=6; name="deliverables"; path="server-files/Project Templates/Standard - 1/deliverables/"; version=1; parent_id={id=5}; is_checked_out=false; is_default=false}).
+        Add(7, {id=7; name="explorer_root"; path="server-files/Project Templates/Standard - 1/explorer_root/"; version=1; parent_id={id=5}; is_checked_out=false; is_default=false}).
+        Add(8, {id=8; name="Project emails"; path="server-files/Project emails/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(9, {id=9; name="Shared files"; path="server-files/Shared files/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(10, {id=10; name="Companies"; path="server-files/Companies/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(11, {id=11; name="snapshots"; path="server-files/snapshots/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(12, {id=12; name="Sales Activities"; path="server-files/Sales Activities/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(13, {id=13; name="File importer"; path="server-files/File importer/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(14, {id=14; name="Users"; path="server-files/Users/"; version=1; parent_id={id=1}; is_checked_out=false; is_default=false}).
+        Add(15, {id=15; name="rw"; path="server-files/Users/rw/"; version=1; parent_id={id=14}; is_checked_out=false; is_default=false}).
+        Add(16, {id=16; name="ro"; path="server-files/Users/ro/"; version=1; parent_id={id=14}; is_checked_out=false; is_default=false}).
+        Add(17, {id=17; name="Project 1"; path="server-files/Projects/Project 1/"; version=1; parent_id={id=2}; is_checked_out=false; is_default=false}).
+        Add(18, {id=18; name="Project 2"; path="server-files/Projects/Project 2/"; version=1; parent_id={id=2}; is_checked_out=false; is_default=false}).
+        Add(19, {id=19; name="none"; path="server-files/Users/none/"; version=1; parent_id={id=14}; is_checked_out=false; is_default=false}).
+        Add(20, {id=20; name="Delete me"; path="server-files/Shared files/Delete me/"; version=1; parent_id={id=9}; is_checked_out=false; is_default=false}).
+        Add(21, {id=21; name="Delete me too"; path="server-files/File importer/Delete me too/"; version=1; parent_id={id=13}; is_checked_out=false; is_default=false})
         ]
 
         let users = [Map.empty.
-        Add(0, new User(0, "Bypass authorization", "")).
-        Add(100, new User(100, "Reader/Writer", "rw")).
-        Add(101, new User(101, "Reader", "ro")).
-        Add(102, new User(102, "None", "none"))
+        Add(0, {id=0; name="Bypass authorization"; initials=""}).
+        Add(100, {id=100; name="Reader/Writer"; initials="rw"}).
+        Add(101, {id=101; name="Reader"; initials="ro"}).
+        Add(102, {id=102; name="None"; initials="none"})
         ];;
