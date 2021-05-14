@@ -4,15 +4,15 @@ namespace Project
         // Defines the structure of a file.
         type File = { id: int; version: int; versionChanged: int; name: string; parentId: int; timestamp: string; }
         // Required as the parent_id is another record.
-        type directoryParent = {id: int}
+        type DirectoryParent = {id: int}
         // Defines the structure of a directory.
-        type OrbitDirectory = {id: int; name: string; path: string; version: int; parent_id: directoryParent; is_checked_out: bool; is_default: bool}
+        type OrbitDirectory = {id: int; name: string; path: string; version: int; parent_id: DirectoryParent; is_checked_out: bool; is_default: bool}
         // Defines a file response from the service part of the API.
-        type ServiceFile = {id: int; name: string; size: string; mimetype: string; parent_id: directoryParent; version: int; created_at: string; modified_at: string; ms_timestamp: string; path: string; snapshots_enabled: bool}
+        type ServiceFile = {id: int; name: string; size: string; mimetype: string; parent_id: DirectoryParent; version: int; created_at: string; modified_at: string; ms_timestamp: string; path: string; snapshots_enabled: bool}
         // Defines the structure of a user.
         type User = {id: int; name: string; initials: string}
         
-       
+      
         
         // All files NOT from the service request, they follow another format.
         let files = [Map.empty.
@@ -20,6 +20,7 @@ namespace Project
         Add(3, {id=3; version=1; versionChanged=1; name="README.txt"; parentId=16; timestamp="637479675580000000"}).
         Add(4, {id=4; version=1; versionChanged=1; name="INTRO.txt"; parentId=9; timestamp="637479675580000000"})
         ]
+
 
         let directories = [Map.empty.
         Add(1, {id=1; name="server-files"; path="server-files/"; version=1; parent_id={id=0}; is_checked_out=false; is_default=false}).
