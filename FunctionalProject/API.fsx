@@ -26,7 +26,8 @@ module API =
         
         type element = {id: int; version: int}
         type MoveDirectory = {success: bool; newVersions: list<element>} 
-
+        type ErrorResponse = String
+        type FileResponse = FileCreation | ErrorResponse 
         // Can be called by e.g. getFileById<id> if one parameter and getDirectoryById(<id1> <id2> <"name">) if multiple parameters.
         // Get Requests
         let fileMetaInformationById (userId: int, fileId: int) = "http://localhost:8085/file/meta?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
@@ -37,7 +38,20 @@ module API =
         let getDirectoryMetaData (userId: int, dirId: int) = "http://localhost:8085/api/directories?userId=" + string userId + "&id=" + string dirId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<DirectoryMetaData>
 
         // Post Requests
+        
+        let create userId dirId fileName timestamp = 
+            let result = 
+                Request.createUrl Post ("http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp) 
+                |> getResponse
+                |> run
+            match result.statusCode with 
+                | 200 -> Json.deserialize<FileResponse>
+ 
+
+        
+        
         let createFile (userId: int, dirId: int, fileName: string, timestamp: string) = "http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<FileCreation>
+        
         let moveFile (userId: int, fileId: int, version: int, parentId: int, newFileName: string) = "http://localhost:8085/file/move?userId=" + string userId + "&id=" + string fileId + "&version=" + string version + "&parentId=" + string parentId + "&name=" + newFileName |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<MoveFile>
         let createDirectory (userId: int, parentId: int, dirName: string, version: int) = "http://localhost:8085/dir?userId=" + string userId + "&parentId=" + string parentId + "&name=" + dirName + "&version=" + string version |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<DirectoryCreation>
         let moveDirectory (userId: int, dirId: int, version: int, name: string, parentDirId: int, parentDirVersion: int) = "http://localhost:8085/dir/move?userId=" + string userId + "&id=" + string dirId + "&version=" + string version + "&name=" + name + "&parentId=" + string parentDirId + "&parentVersion=" + string parentDirVersion |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<MoveDirectory>

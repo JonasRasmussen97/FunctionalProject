@@ -1,8 +1,7 @@
 namespace Project
     module Model =
-
         // Defines the structure of a file.
-        type File = { id: int; version: int; versionChanged: int; name: string; parentId: int; timestamp: string; }
+        type FileMetaData = {id: int; version: int; versionChanged: int; name: string; parentId: int; timestamp: string}
         // Required as the parent_id is another record.
         type DirectoryParent = {id: int}
         // Defines the structure of a directory.
@@ -12,7 +11,7 @@ namespace Project
         // Defines the structure of a user.
         type User = {id: int; name: string; initials: string}
         
-      
+     
         
         // All files NOT from the service request, they follow another format.
         let files = [Map.empty.
