@@ -46,11 +46,10 @@ module API =
         let fileMetaInformationByName (userId: int, dirId: int, fileName: string) = "http://localhost:8085/file/meta?userId=" + string userId + "&parent_id=" + string dirId + "&name=" + string fileName |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
         let downloadFile (userId: int, fileId: int) = "http://localhost:8085/file?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileContent>
         let versionCheck (userId: int, ver: string) = "http://localhost:8085/version?userId=" + string userId + "&version=" + string ver |> Request.createUrl Get |> Request.responseAsString |> run
-        let getFileMetaData (userId: int, fileId: int) = "http://localhost:8085/api/files?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<ServiceFileMetaData>
-        let getDirectoryMetaData (userId: int, dirId: int) = "http://localhost:8085/api/directories?userId=" + string userId + "&id=" + string dirId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<DirectoryMetaData>
+        //let getFileMetaData userId fileId = "http://localhost:8085/api/files?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>
+        let getDirectoryMetaData userId dirId = "http://localhost:8085/api/directories?userId=" + string userId + "&id=" + string dirId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<DirectoryMetaData>
 
         // Post Requests
-        
         let create userId dirId fileName timestamp = 
             let result = 
                 Request.createUrl Post ("http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp) 
@@ -60,7 +59,14 @@ module API =
                 | 200 -> {Fail = None; Success = Some(Json.deserialize<FileCreation>)}
                 | 409 -> {Fail = Some(Conflict); Success = None}  
  
-
+        let getFileMetaData userId fileId = 
+            let result = 
+                Request.createUrl Get ("http://localhost:8085/api/files?userId=" + string userId + "&id" + string fileId) 
+                |> getResponse
+                |> run
+            match result.statusCode with 
+                | 200 -> {Fail = None; Success = Some(Json.deserialize<FileMetaData>)}
+                | 404 -> {Fail = Some(NotFound); Success = None}
         
         
         let createFileAPI (userId: int) (dirId: int) (fileName: string) (timestamp: string) = "http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<FileCreation>
