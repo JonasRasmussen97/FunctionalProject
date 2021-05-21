@@ -41,8 +41,8 @@ module Testing =
                 member __.Check (api,model) = 
                     let apiResponse = API.fileMetaInformationById(0, id)
                     let modelResponse = model.FileMetaData |> List.find (fun e -> e.id = id)
-                    (apiResponse = modelResponse).ToProperty() |@ sprintf ""
-                override __.ToString() = "getFileMetaInformation"}
+                    (apiResponse = modelResponse).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
+                override __.ToString() = sprintf "getFileMetaInformation fileId=%i" id}
 
         let getDirectoryMetaInformation id = 
                    { new Operation<apiModel,InModel>() with
@@ -50,8 +50,8 @@ module Testing =
                        member __.Check (api,model) = 
                            let apiResponse = API.getDirectoryMetaData(0, id)
                            let modelResponse = model.directories |> List.find (fun e -> e.id = id)
-                           (apiResponse = modelResponse).ToProperty() |@ sprintf "Error api=%A  Model=%A" apiResponse modelResponse
-                       override __.ToString() = sprintf "getDirectoryMetaInformation dirId=%i" id }
+                           (apiResponse = modelResponse).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
+                       override __.ToString() = sprintf "getDirectoryMetaInformation dirId=%i" id}
         let createFile userId dirId name timeStamp = 
                           { new Operation<apiModel,InModel>() with
                               member __.Run model = 
@@ -79,7 +79,7 @@ module Testing =
                             {id=4; version=1; versionChanged=1; name="INTRO.txt"; parentId=9; timestamp="637479675580000000"}
                             ]
                             directories = [ 
-                            {id=1; name="server-files"; path="server-files/"; version=1; parent=Some({id=(0)}); is_checked_out=false; is_default=false}
+                            {id=1; name="server-files"; path="server-files/"; version=1; parent=None; is_checked_out=false; is_default=false}
                             {id=2; name="Projects"; path="server-files/Projects/"; version=1; parent=Some({id=(1)}); is_checked_out=false; is_default=false}
                             {id=3; name="Project deliverables"; path="server-files/Project deliverables/"; version=1; parent=Some({id=(1)}); is_checked_out=false; is_default=false}
                             {id=4; name="Project Templates"; path="server-files/Project Templates/"; version=1; parent=Some({id=(1)}); is_checked_out=false; is_default=false}
