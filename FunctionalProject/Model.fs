@@ -41,5 +41,5 @@ module Model =
         {id=20; name="Delete me"; path="server-files/Shared files/Delete me/"; version=1; parent=Some({id=(9)}); is_checked_out=false; is_default=false}
         {id=21; name="Delete me too"; path="server-files/File importer/Delete me too/"; version=1; parent=Some({id=(13)}); is_checked_out=false; is_default=false}
         ]
-        currentFileId = 5
+        currentFileId = 4
         }
