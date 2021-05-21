@@ -6,7 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DockerReboot.fs" />
+    <Compile Include="API.fs" />
+    <Compile Include="Model.fs" />
+    <Compile Include="Utilities.fs" />
+    <Compile Include="Testing.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FsCheck" Version="2.15.3" />
+    <PackageReference Include="FSharp.Json" Version="0.4.0" />
+    <PackageReference Include="Http.fs" Version="5.4.0" />
   </ItemGroup>
 
 </Project>
