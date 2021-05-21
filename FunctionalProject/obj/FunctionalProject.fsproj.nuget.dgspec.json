@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\SaltO\\Desktop\\FunctionalProject\\FunctionalProject.fsproj": {}
+    "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj": {}
   },
   "projects": {
-    "C:\\Users\\SaltO\\Desktop\\FunctionalProject\\FunctionalProject.fsproj": {
+    "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\SaltO\\Desktop\\FunctionalProject\\FunctionalProject.fsproj",
+        "projectUniqueName": "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj",
         "projectName": "FunctionalProject",
-        "projectPath": "C:\\Users\\SaltO\\Desktop\\FunctionalProject\\FunctionalProject.fsproj",
+        "projectPath": "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj",
         "packagesPath": "C:\\Users\\SaltO\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\SaltO\\Desktop\\FunctionalProject\\obj\\",
+        "outputPath": "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\SaltO\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\SaltO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -36,6 +42,21 @@
             "FSharp.Core": {
               "target": "Package",
               "version": "[5.0.0, )",
+              "generatePathProperty": true
+            },
+            "FSharp.Json": {
+              "target": "Package",
+              "version": "[0.4.0, )",
+              "generatePathProperty": true
+            },
+            "FsCheck": {
+              "target": "Package",
+              "version": "[2.15.3, )",
+              "generatePathProperty": true
+            },
+            "Http.fs": {
+              "target": "Package",
+              "version": "[5.4.0, )",
               "generatePathProperty": true
             }
           },
@@ -54,7 +75,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }
