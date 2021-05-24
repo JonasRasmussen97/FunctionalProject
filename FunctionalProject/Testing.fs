@@ -90,7 +90,6 @@ module Testing =
                  // Generates a random string.
                 let fileTimeStampGenerator = Gen.oneof[gen { return "123"}]
                 let stringGenerator = Gen.oneof[gen {return "Hello.txt"}; gen {return "ThisWorksToo.txt"}; gen {return "AnotherOne.txt"}] 
-                let startingFileId = 5
                 let fileIdGen = Gen.frequency [(2,Gen.elements fileIds); (1 ,fileIdGenerator )]
                 let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGenerator]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGenerator] 
