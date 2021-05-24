@@ -38,35 +38,35 @@ module Testing =
 
         let getDirectoryMetaInformation id = 
                     {new Operation<apiModel,InModel>() with
-                        member __.Run model = model
-                        member __.Check (api,model) = 
-                            let apiResponse = API.getDirectoryMetaData 0 id
-                            let modelResponse = model.directories |> List.find (fun e -> e.id = id)
-                            (apiResponse = modelResponse).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
-                        override __.ToString() = sprintf "getDirectoryMetaInformation dirId=%i" id}
+                       member __.Run model = model
+                       member __.Check (api,model) = 
+                           let apiResponse = API.getDirectoryMetaData 0 id
+                           let modelResponse = model.directories |> List.find (fun e -> e.id = id)
+                           (apiResponse = modelResponse).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
+                       override __.ToString() = sprintf "getDirectoryMetaInformation dirId=%i" id}
         let createFile userId dirId name timeStamp = 
                     {new Operation<apiModel,InModel>() with
-                        member __.Run model = 
-                            let result = Utilities.createFileModel model dirId userId name timeStamp
-                            let apiResult = API.create userId dirId name timeStamp
-                            match result.Fail, result.Success with 
+                      member __.Run model = 
+                          let result = Utilities.createFileModel model dirId userId name timeStamp
+                          let apiResult = API.create userId dirId name timeStamp
+                          match result.Fail, result.Success with 
                             | None, Some m -> m
                             | Some error, None -> model
-                        member __.Check (api,model) =  
-                            true.ToProperty()
-                        override __.ToString() = sprintf "createFile name=%s" name}
+                      member __.Check (api,model) =  
+                        true.ToProperty()
+                       override __.ToString() = sprintf "createFile name=%s" name}
         
         let deleteFile userId fileId fileVersion = 
                     {new Operation<apiModel,InModel>() with
-                        member __.Run model = 
-                            let result = Utilities.deleteFileModel model userId fileId
-                            let apiResult = API.deleteFile userId fileId fileVersion   
-                            match result.Fail, result.Success with 
-                                | None, Some m -> m
-                                | Some error, None -> model
-                        member __.Check (api,model) =  
-                            true.ToProperty()
-                        override __.ToString() = sprintf "deleteFile fileId=%i" fileId}
+                      member __.Run model = 
+                        let result = Utilities.deleteFileModel model userId fileId
+                        let apiResult = API.deleteFile userId fileId fileVersion   
+                        match result.Fail, result.Success with 
+                            | None, Some m -> m
+                            | Some error, None -> model
+                      member __.Check (api,model) =  
+                        true.ToProperty()
+                       override __.ToString() = sprintf "deleteFile fileId=%i" fileId}
       
         let create  = 
             { new Setup<apiModel,InModel>() with
@@ -79,7 +79,7 @@ module Testing =
                 member __.Model() = Model.model
                 
             }
-        { new Machine<apiModel,InModel>(100) with
+        { new Machine<apiModel,InModel>(10) with
             member __.Setup = create |> Gen.constant |> Arb.fromGen
             member __.Next model =
                 let fileIds = Utilities.getAllFileIds model.files
@@ -96,7 +96,7 @@ module Testing =
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGenerator] 
                 let createFileGen = [Gen.map4 createFile userIdGenerator directoryIdGenerator stringGenerator fileTimeStampGenerator]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGenerator fileIdGenerator fileVersionGenerator]
-                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen @ deleteFileGen)
+                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen)
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }
