@@ -14,18 +14,9 @@ module Utilities =
             | index, head::restOfArr -> head::remove (index - 1) restOfArr
             | index, [] -> failwith "index out of range"
 
-    let findIndexById fileId list = 
-        let res = List.findIndex<FileMetaData> (fun e -> e.id = fileId) list
-        res
-
     let getAllFileIds (list:API.FileMetaData list) = 
         list |> List.map (fun e -> e.id)
-    
-    let getFileMetaDataModel (model:InModel) userId fileId = 
-        let canGetFile = if (userId <> 0) then false else true
-        match canGetFile with 
-            | true -> {Fail = None; Success = Some(model.files.Item (findIndexById fileId model.files) )} 
-            | false -> {Fail = None; Success = None}
+            
 
     let createFileModel (model:InModel) dirId  userId name timeStamp = 
         let canCreateFile = if (userId <> 0) then false else true

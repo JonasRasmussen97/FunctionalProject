@@ -27,19 +27,14 @@ module Testing =
         //   member __.createFile(userId: int, dirId: int, fileName: string, timestamp: string) = API.createFile(userId, dirId, fileName, timestamp)
             
     let spec =
-        let getFileMetaInformation fileId = 
+        let getFileMetaInformation id = 
             { new Operation<apiModel,InModel>() with
                 member __.Run model = model
                 member __.Check (api,model) = 
-                    let apiResponse = API.getFileMetaData 0 fileId
-                    //let modelResponse = model.files |> List.find (fun e -> e.id = fileId)
-                    let modelResponse = Utilities.getFileMetaDataModel model 0 fileId
-                    match apiResponse.Fail, apiResponse.Success, modelResponse.Fail, modelResponse.Success with 
-                    | None, Some apiRes, None, Some modelRes ->
-                        let res = apiRes = modelRes
-                        res.ToProperty() |@ sprintf "fileMeta different model:  %A SUT: %A" m s
-                    | Some error, None -> model
-                override __.ToString() = sprintf "getFileMetaInformation fileId=%i" fileId}
+                    let apiResponse = API.fileMetaInformationById(0, id)
+                    let modelResponse = model.files |> List.find (fun e -> e.id = id)
+                    (apiResponse = modelResponse).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
+                override __.ToString() = sprintf "getFileMetaInformation fileId=%i" id}
 
         let getDirectoryMetaInformation id = 
                     {new Operation<apiModel,InModel>() with
@@ -54,7 +49,7 @@ module Testing =
                         member __.Run model = 
                             let result = Utilities.createFileModel model dirId userId name timeStamp
                             let apiResult = API.create userId dirId name timeStamp
-                            match result.Fail, result.Success, apiResult.Fail, apiResult.Success with 
+                            match result.Fail, result.Success with 
                             | None, Some m -> m
                             | Some error, None -> model
                         member __.Check (api,model) =  
@@ -89,7 +84,6 @@ module Testing =
             member __.Next model =
                 let fileIds = Utilities.getAllFileIds model.files
                 let fileIdGenerator = Gen.choose(2, 4)
-                let id = Gen.elements(fileIds)
                 let fileVersionGenerator = Gen.oneof [gen {return 1}]
                 let userIdGenerator = Gen.oneof [ gen { return 0 }]
                 let directoryIdGenerator = Gen.choose(1, 21)
@@ -98,11 +92,11 @@ module Testing =
                 let stringGenerator = Gen.oneof[gen {return "Hello.txt"}; gen {return "ThisWorksToo.txt"}; gen {return "AnotherOne.txt"}] 
                 let startingFileId = 5
                 let fileIdGen = Gen.frequency [(2,Gen.elements fileIds); (1 ,fileIdGenerator )]
-                let fileMetaInformationGen = [Gen.map getFileMetaInformation id]
+                let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGenerator]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGenerator] 
                 let createFileGen = [Gen.map4 createFile userIdGenerator directoryIdGenerator stringGenerator fileTimeStampGenerator]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGenerator fileIdGenerator fileVersionGenerator]
-                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen)
+                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen @ deleteFileGen)
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }
