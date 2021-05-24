@@ -25,7 +25,7 @@ module API =
         type FileCreation = {id: string; version: int; name: string; timestamp: int64}
         type DirectoryCreation = {name: string; id: string; version: int; parentId: int; newVersions: list<int>}
         type MoveFile = {id: int; version: int; name: string}
-        
+        type FileDeleted = {success: bool}
         type element = {id: int; version: int}
         type MoveDirectory = {success: bool; newVersions: list<element>} 
         type ErrorResponse = String
@@ -67,6 +67,15 @@ module API =
             match result.statusCode with 
                 | 200 -> {Fail = None; Success = Some(Json.deserialize<FileMetaData>)}
                 | 404 -> {Fail = Some(NotFound); Success = None}
+        
+        let deleteFile userId fileId fileVersion =
+            let result = 
+                Request.createUrl Delete ("http://localhost:8085/file?userId=" + string userId + "&id=" + string fileId + "&version=" + string fileVersion)
+                |> getResponse
+                |> run
+            match result.statusCode with 
+                | 200 -> {Fail = None; Success = Some(Json.deserialize<FileDeleted>)}
+                | 404 -> {Fail = Some(NotFound); Success = None} 
         
         
         let createFileAPI (userId: int) (dirId: int) (fileName: string) (timestamp: string) = "http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<FileCreation>

@@ -14,17 +14,9 @@ open System.Threading
 
 
 module Testing =
-    // Generates a random file id to be used. Needs to be added to the model & the api.
-    let fileIdGenerator = Gen.choose(2, 4)
-    let userIdGenerator = Gen.oneof [ gen { return 0 }]
-    let directoryIdGenerator = Gen.choose(1, 21)
-    // Generates a random string.
-    let fileTimeStampGenerator = Gen.oneof[gen { return "123"}]
-    let stringGenerator = Gen.oneof[gen {return "Hello.txt"}; gen {return "ThisWorksToo.txt"}; gen {return "AnotherOne.txt"}] 
-    let startingFileId = 5
+    
     // API Operations.
 
-  
     [<StructuredFormatDisplay("")>]
     type apiModel () = 
             let fileVersion = 0
@@ -63,7 +55,19 @@ module Testing =
                       member __.Check (api,model) =  
                         true.ToProperty()
                        override __.ToString() = sprintf "createFile name=%s" name}
-                        
+        
+        let deleteFile userId fileId fileVersion = 
+                    {new Operation<apiModel,InModel>() with
+                      member __.Run model = 
+                        let result = Utilities.deleteFileModel model userId fileId
+                        let apiResult = API.deleteFile userId fileId fileVersion   
+                        match result.Fail, result.Success with 
+                            | None, Some m -> m
+                            | Some error, None -> model
+                      member __.Check (api,model) =  
+                        true.ToProperty()
+                       override __.ToString() = sprintf "deleteFile fileId=%i" fileId}
+      
         let create  = 
             { new Setup<apiModel,InModel>() with
                 member __.Actual() = 
@@ -79,10 +83,19 @@ module Testing =
             member __.Setup = create |> Gen.constant |> Arb.fromGen
             member __.Next model =
                 let fileIds = Utilities.getAllFileIds model.files
+                let fileIdGenerator = Gen.choose(2, 4)
+                let fileVersionGenerator = Gen.oneof [gen {return 1}]
+                let userIdGenerator = Gen.oneof [ gen { return 0 }]
+                let directoryIdGenerator = Gen.choose(1, 21)
+                 // Generates a random string.
+                let fileTimeStampGenerator = Gen.oneof[gen { return "123"}]
+                let stringGenerator = Gen.oneof[gen {return "Hello.txt"}; gen {return "ThisWorksToo.txt"}; gen {return "AnotherOne.txt"}] 
+                let startingFileId = 5
                 let fileIdGen = Gen.frequency [(2,Gen.elements fileIds); (1 ,fileIdGenerator )]
-                let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGen]
+                let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGenerator]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGenerator] 
                 let createFileGen = [Gen.map4 createFile userIdGenerator directoryIdGenerator stringGenerator fileTimeStampGenerator]
+                let deleteFileGen = [Gen.map3 deleteFile userIdGenerator fileIdGenerator fileVersionGenerator]
                 Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen)
         }
 
