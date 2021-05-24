@@ -34,11 +34,6 @@ module API =
         type ResponseCode = 
             | NotFound
             | Conflict
-            | InvalidFilename
-            | Unauthorized
-            | InternalServerError
-            | BadRequest
-            | UnknownError
 
         type ResponseTypes<'a> = {
             Fail: ResponseCode option
@@ -62,11 +57,7 @@ module API =
                 |> run
             match result.statusCode with 
                 | 200 -> {Fail = None; Success = Some(Json.deserialize<FileCreation>)}
-                | 400 -> {Fail = Some(InvalidFilename); Success = None}
-                | 401 -> {Fail = Some(Unauthorized); Success = None}
-                | 404 -> {Fail = Some(NotFound); Success = None}
-                | 409 -> {Fail = Some(Conflict); Success = None}
-                | 500 -> {Fail = Some(InternalServerError); Success = None}
+                | 409 -> {Fail = Some(Conflict); Success = None}  
         
         let getFileMetaData userId fileId = 
             let result = 
@@ -75,11 +66,7 @@ module API =
                 |> run
             match result.statusCode with 
                 | 200 -> {Fail = None; Success = Some(Json.deserialize<FileMetaData>)}
-                | 400 -> {Fail = Some(BadRequest); Success = None}
-                | 401 -> {Fail = Some(Unauthorized); Success = None}
                 | 404 -> {Fail = Some(NotFound); Success = None}
-                | 409 -> {Fail = Some(Conflict); Success = None}
-                | 500 -> {Fail = Some(UnknownError); Success = None}
         
         let deleteFile userId fileId fileVersion =
             let result = 
@@ -88,11 +75,7 @@ module API =
                 |> run
             match result.statusCode with 
                 | 200 -> {Fail = None; Success = Some(Json.deserialize<FileDeleted>)}
-                | 400 -> {Fail = Some(InvalidFilename); Success = None}
-                | 401 -> {Fail = Some(Unauthorized); Success = None}
-                | 404 -> {Fail = Some(NotFound); Success = None}
-                | 409 -> {Fail = Some(Conflict); Success = None}
-                | 500 -> {Fail = Some(UnknownError); Success = None} 
+                | 404 -> {Fail = Some(NotFound); Success = None} 
         
         
         let createFileAPI (userId: int) (dirId: int) (fileName: string) (timestamp: string) = "http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<FileCreation>
