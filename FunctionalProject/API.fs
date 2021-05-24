@@ -48,7 +48,7 @@ module API =
 
         // Can be called by e.g. getFileById<id> if one parameter and getDirectoryById(<id1> <id2> <"name">) if multiple parameters.
         // Get Requests
-        let fileMetaInformationById (userId: int, fileId: int) = "http://localhost:8085/file/meta?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
+        let fileMetaInformationById userId fileId = "http://localhost:8085/file/meta?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
         let fileMetaInformationByName (userId: int, dirId: int, fileName: string) = "http://localhost:8085/file/meta?userId=" + string userId + "&parent_id=" + string dirId + "&name=" + string fileName |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
         let downloadFile (userId: int, fileId: int) = "http://localhost:8085/file?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileContent>
         let versionCheck (userId: int, ver: string) = "http://localhost:8085/version?userId=" + string userId + "&version=" + string ver |> Request.createUrl Get |> Request.responseAsString |> run

@@ -1,6 +1,6 @@
 ﻿namespace FunctionalProject.Testing
 
-open FSharp
+open System
 open FsCheck.Experimental
 open FunctionalProject.API
 open FunctionalProject.Model
@@ -31,7 +31,7 @@ module Testing =
             { new Operation<apiModel,InModel>() with
                 member __.Run model = model
                 member __.Check (api,model) = 
-                    let apiResponse = API.fileMetaInformationById(0, id)
+                    let apiResponse = API.fileMetaInformationById 0 id
                     let modelResponse = model.files |> List.find (fun e -> e.id = id)
                     (apiResponse = modelResponse).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
                 override __.ToString() = sprintf "getFileMetaInformation fileId=%i" id}
@@ -87,15 +87,15 @@ module Testing =
                 let fileVersionGenerator = Gen.oneof [gen {return 1}]
                 let userIdGenerator = Gen.oneof [ gen { return 0 }]
                 let directoryIdGenerator = Gen.choose(1, 21)
-                 // Generates a random string.
                 let fileTimeStampGenerator = Gen.oneof[gen { return "123"}]
-                let stringGenerator = Gen.oneof[gen {return "Hello.txt"}; gen {return "ThisWorksToo.txt"}; gen {return "AnotherOne.txt"}] 
-                let fileIdGen = Gen.frequency [(2,Gen.elements fileIds); (1 ,fileIdGenerator )]
-                let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGenerator]
+                let stringGenerator = Gen.oneof[gen {return "Hello.txt"}; gen {return "ThisWorksToo.txt"}; gen {return "AnotherOne.txt"}; ]
+                let stringGen = Arb.generate<NonEmptyString>
+                let fileIdGen = Gen.frequency [(4,Gen.elements fileIds); (1 ,fileIdGenerator )]
+                let fileMetaInformationGen = [Gen.map getFileMetaInformation (Gen.elements fileIds)]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGenerator] 
-                let createFileGen = [Gen.map4 createFile userIdGenerator directoryIdGenerator stringGenerator fileTimeStampGenerator]
+                let createFileGen = [Gen.map4 createFile userIdGenerator directoryIdGenerator stringGen fileTimeStampGenerator]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGenerator fileIdGenerator fileVersionGenerator]
-                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen)
+                Gen.oneof (createFileGen)
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }
