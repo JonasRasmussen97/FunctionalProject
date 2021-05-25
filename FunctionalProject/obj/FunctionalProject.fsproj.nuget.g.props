@@ -5,20 +5,21 @@
     <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
     <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
     <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
-    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\finch\.nuget\packages\</NuGetPackageFolders>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\SaltO\.nuget\packages\;C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages</NuGetPackageFolders>
     <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
     <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">5.9.1</NuGetToolVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <SourceRoot Include="C:\Users\finch\.nuget\packages\" />
+    <SourceRoot Include="C:\Users\SaltO\.nuget\packages\" />
+    <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
   </ItemGroup>
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">C:\Users\finch\.nuget\packages\fsharp.core\5.0.0</PkgFSharp_Core>
-    <PkgHttp_fs Condition=" '$(PkgHttp_fs)' == '' ">C:\Users\finch\.nuget\packages\http.fs\5.4.0</PkgHttp_fs>
-    <PkgFSharp_Json Condition=" '$(PkgFSharp_Json)' == '' ">C:\Users\finch\.nuget\packages\fsharp.json\0.4.0</PkgFSharp_Json>
-    <PkgFsCheck Condition=" '$(PkgFsCheck)' == '' ">C:\Users\finch\.nuget\packages\fscheck\2.15.3</PkgFsCheck>
+    <PkgFSharp_Core Condition=" '$(PkgFSharp_Core)' == '' ">C:\Users\SaltO\.nuget\packages\fsharp.core\5.0.0</PkgFSharp_Core>
+    <PkgHttp_fs Condition=" '$(PkgHttp_fs)' == '' ">C:\Users\SaltO\.nuget\packages\http.fs\5.4.0</PkgHttp_fs>
+    <PkgFSharp_Json Condition=" '$(PkgFSharp_Json)' == '' ">C:\Users\SaltO\.nuget\packages\fsharp.json\0.4.0</PkgFSharp_Json>
+    <PkgFsCheck Condition=" '$(PkgFsCheck)' == '' ">C:\Users\SaltO\.nuget\packages\fscheck\2.15.3</PkgFsCheck>
   </PropertyGroup>
 </Project>

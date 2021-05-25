@@ -17,6 +17,16 @@ module Utilities =
     let getAllFileIds (list:API.FileMetaData list) = 
         list |> List.map (fun e -> e.id)
 
+    let getAllDirectoryIds (list: API.DirectoryMetaData list) = 
+        list |> List.map (fun e -> e.id)
+        
+    // Den her virker!
+    let getModelFileById (list:API.FileMetaData list) fileId = 
+        let result = list |> List.tryFind (fun e -> e.id = fileId)
+        match result with 
+            | Some file -> {Fail=None; Success=Some(file)} 
+            | None -> {Fail=Some(NotFound); Success=None}
+
     let createFileModel (model:InModel) dirId userId name timeStamp = 
         let canCreateFile = if (userId <> 0) then false else true
         match canCreateFile with 

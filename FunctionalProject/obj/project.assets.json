@@ -4493,24 +4493,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\finch\\.nuget\\packages\\": {}
+    "C:\\Users\\SaltO\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\finch\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj",
+      "projectUniqueName": "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj",
       "projectName": "FunctionalProject",
-      "projectPath": "C:\\Users\\finch\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj",
-      "packagesPath": "C:\\Users\\finch\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\finch\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\obj\\",
+      "projectPath": "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\FunctionalProject.fsproj",
+      "packagesPath": "C:\\Users\\SaltO\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\SaltO\\Documents\\GitHub\\FunctionalProject\\FunctionalProject\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\finch\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\SaltO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

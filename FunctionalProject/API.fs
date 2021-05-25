@@ -10,13 +10,7 @@ module API =
         type ParentId = {id: int}
         // This is required because parent_id on directories can be either null if there is no parent or have the structure of the ParentId record.
        // type DirectoryParent = Option<ParentId>
-        type FileMetaData = {
-            id: int 
-            version: int
-            versionChanged: int
-            name: string
-            parentId: int
-            timestamp: string}
+        type FileMetaData = {id: int; version: int; versionChanged: int; name: string; parentId: int; timestamp: string}
         type FileContent = {content: string}
         type ServiceFileMetaData = {id: int; name: string; size: string; mimetype: string; parent_id: int; version: int; created_at: string; modified_at: string; ms_timestamp: string; path: string; snapshots_enabled: bool}
         
@@ -31,6 +25,7 @@ module API =
         type ErrorResponse = String
         type FileResponse = FileCreation 
 
+       
         type ResponseCode = 
             | NotFound
             | Conflict
@@ -55,6 +50,14 @@ module API =
       //  let getFileMetaData userId fileId = "http://localhost:8085/api/files?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>
         let getDirectoryMetaData userId dirId = "http://localhost:8085/api/directories?userId=" + string userId + "&id=" + string dirId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<DirectoryMetaData>
 
+        let fileInfo userId fileId = ("http://localhost:8085/file/meta?userId=" + string userId + "&id=" + string fileId) |> Request.createUrl Get |> getResponse |> run |> Response.readBodyAsString 
+        
+        let createSuccess x =
+               {
+                   Fail = None
+                   Success = Some(x)
+               }
+
         // Post Requests
         let create userId dirId fileName timestamp = 
             let result = 
@@ -69,18 +72,19 @@ module API =
                 | 409 -> {Fail = Some(Conflict); Success = None}
                 | 500 -> {Fail = Some(InternalServerError); Success = None}
         
+        // Den her virker!
         let getFileMetaData userId fileId = 
-            let result = 
-                Request.createUrl Get ("http://localhost:8085/api/files?userId=" + string userId + "&id" + string fileId) 
-                |> getResponse
-                |> run
-            match result.statusCode with 
-                | 200 -> {Fail = None; Success = Some(Json.deserialize<FileMetaData>)}
-                | 400 -> {Fail = Some(BadRequest); Success = None}
-                | 401 -> {Fail = Some(Unauthorized); Success = None}
-                | 404 -> {Fail = Some(NotFound); Success = None}
-                | 409 -> {Fail = Some(Conflict); Success = None}
-                | 500 -> {Fail = Some(UnknownError); Success = None}
+           let result =
+            Request.createUrl Get ("http://localhost:8085/file/meta?userId=" + string userId + "&id=" + string fileId) 
+            |> getResponse
+            |> run
+           match result.statusCode with 
+            | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<FileMetaData> |> createSuccess 
+            | 400 -> {Fail = Some(InvalidFilename); Success = None}
+            | 401 -> {Fail = Some(Unauthorized); Success = None}
+            | 404 -> {Fail = Some(NotFound); Success = None}
+            | 409 -> {Fail = Some(Conflict); Success = None}
+            | 500 -> {Fail = Some(UnknownError); Success = None}
         
         let deleteFile userId fileId fileVersion =
             let result = 
@@ -88,7 +92,7 @@ module API =
                 |> getResponse
                 |> run
             match result.statusCode with 
-                | 200 -> {Fail = None; Success = Some(Json.deserialize<FileDeleted>)}
+                | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<FileDeleted> |> createSuccess 
                 | 400 -> {Fail = Some(InvalidFilename); Success = None}
                 | 401 -> {Fail = Some(Unauthorized); Success = None}
                 | 404 -> {Fail = Some(NotFound); Success = None}
