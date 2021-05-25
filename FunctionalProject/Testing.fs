@@ -37,8 +37,10 @@ module Testing =
                     let modelResponse = Utilities.getModelFileById model.files id
                     match apiResponse.Success, modelResponse.Success, apiResponse.Fail, modelResponse.Fail with 
                         | Some apiFile, Some modelFile, None, None -> (apiFile = modelFile).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse 
-                        | None, None, Some apiError, Some modelError -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
-                        | _ -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse
+                        | None, None, Some apiError, Some modelError -> true.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiError modelError
+                        | Some apiFile, None, None, Some modelError -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiFile modelError
+                        | None, Some modelFile, Some apiError, None -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiError modelFile
+                        | _ -> true.ToProperty() |@ sprintf "Error: api=%A  Model=%A Id=%i" apiResponse modelResponse id
                 override __.ToString() = sprintf "getFileMetaInformation fileId=%i" id}
         let getDirectoryMetaInformation id = 
                     {new Operation<apiModel,InModel>() with
@@ -91,16 +93,16 @@ module Testing =
                 let fileIdGenerator = Gen.choose(2, 4)
                 let fileVersionGenerator = Gen.oneof [gen {return 1}]
                 let userIdGenerator = Gen.oneof [gen { return 0 }]
-                let directoryIdGenerator = Gen.elements(directoryIds)
+                let directoryIdGenerator =  Gen.oneof[gen { return 16 }]
                 let fileTimeStampGenerator = Gen.oneof[gen { return "123"}]
-                let stringGenerator = Gen.oneof[gen {return "Hello.txt"}; gen {return "ThisWorksToo.txt"}; gen {return "AnotherOne.txt"}; ]
+                let stringGenerator = Gen.oneof[gen {return "a"} ]
                 let stringGen = Arb.generate<string>
                 let fileIdGen = Gen.frequency [(4,Gen.elements fileIds); (1 ,fileIdGenerator )]
                 let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGen]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGenerator] 
                 let createFileGen = [Gen.map4 createFile userIdGenerator directoryIdGenerator stringGenerator fileTimeStampGenerator]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGenerator fileIdGenerator fileVersionGenerator]
-                Gen.oneof (fileMetaInformationGen @ createFileGen)
+                Gen.oneof (fileMetaInformationGen @ createFileGen @ directoryMetaInformationGen)
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }
