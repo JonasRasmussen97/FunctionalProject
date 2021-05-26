@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DockerReboot.fs" />
     <Compile Include="API.fs" />
     <Compile Include="Model.fs" />
     <Compile Include="Utilities.fs" />
