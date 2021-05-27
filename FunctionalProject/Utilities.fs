@@ -21,7 +21,12 @@ module Utilities =
         
     let createFileModel (model:InModel) dirId userId name timeStamp = 
         let newFile = {id=model.currentFileId; version=1; versionChanged=1; name=name; parentId=dirId; timestamp=timeStamp}
-        {Fail = None; Pass = Some({model with files = (newFile::model.files); currentFileId = model.currentFileId+1})} 
+        let fileAlreadyExistsInDir = 
+            let result = model.files |> List.tryFind (fun e -> (e.id = model.currentFileId && e.parentId = dirId))
+            match result with 
+            | Some file -> {Fail = Some(Conflict); Pass=None}
+            | None -> {Fail = None; Pass = Some({model with files = newFile::model.files; currentFileId = model.currentFileId+1})} 
+        fileAlreadyExistsInDir
             
     let deleteFileModel (model: InModel) userId fileId =
         let newFiles = model.files |> List.filter(fun e -> e.id <> fileId)

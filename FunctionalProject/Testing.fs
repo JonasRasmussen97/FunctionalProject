@@ -52,12 +52,14 @@ module Testing =
                     {new Operation<apiModel,InModel>() with
                       member __.Run model = 
                           let modelResponse = Utilities.createFileModel model dirId userId name timeStamp
-                          let apiResponse = API.createFile userId dirId name timeStamp
                           match modelResponse.Pass,modelResponse.Fail with  
-                            | Some m, None -> m
+                            | Some m, None -> m 
                             | None, Some error -> model
                       member __.Check (api,model) =  
-                        true.ToProperty()
+                        let apiResponse = API.createFile userId dirId name timeStamp
+                        match apiResponse.Pass, apiResponse.Fail with  
+                            | Some filecreation, None -> true.ToProperty()
+                            | None, Some error -> false.ToProperty() |@ sprintf "Create File Error: %O" error
                        override __.ToString() = sprintf "createFile name=%s" name}
         
         let deleteFile userId fileId fileVersion = 
@@ -74,10 +76,18 @@ module Testing =
       
         let create  = 
             { new Setup<apiModel,InModel>() with
-                member __.Actual() = new apiModel()
+                member __.Actual() = 
+               (*  let dockerStartString = "/C docker run -d --name orbit --rm -p8085:8085 -eCLICOLOR_FORCE=1 cr.orbit.dev/sdu/filesync-server:latest"
+                 let dockerStopString = "/C docker stop orbit"
+                 Thread.Sleep 900
+                 System.Diagnostics.Process.Start("CMD.exe", dockerStopString) 
+                 Thread.Sleep 200
+                 System.Diagnostics.Process.Start("CMD.exe", dockerStartString) 
+                 Thread.Sleep 6000  *)
+                 new apiModel()
                 member __.Model() = Model.model 
             }
-        { new Machine<apiModel,InModel>(5) with
+        { new Machine<apiModel,InModel>(20) with
             member __.Setup = create |> Gen.constant |> Arb.fromGen
             member __.Next model =
                 let fileIds = Utilities.getAllFileIds model.files
@@ -88,13 +98,13 @@ module Testing =
                 let fileIdGen = Gen.frequency [(4,Gen.elements fileIds)]
                 let directoryIdGen =  Gen.elements directoryIds
                 let fileTimeStampGen = Gen.oneof[gen { return "123"}]
-                let filenameGen = Gen.oneof[gen { return "abe"}]
+                let filenameGen = Arb.generate<string> |> Gen.map (fun e -> e + ".txt")
                 
                 let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGen]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGen] 
                 let createFileGen = [Gen.map4 createFile userIdGen directoryIdGen filenameGen fileTimeStampGen]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGen fileIdGen fileVersionGen]
-                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen @ deleteFileGen)
+                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen)
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }
