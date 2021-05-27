@@ -48,7 +48,7 @@ module API =
 
         let fileInfo userId fileId = ("http://localhost:8085/file/meta?userId=" + string userId + "&id=" + string fileId) |> Request.createUrl Get |> getResponse |> run |> Response.readBodyAsString 
         
-        let createSuccess x =
+        let createResponseObject x =
                {
                    Fail = None
                    Pass = Some(x)
@@ -76,7 +76,7 @@ module API =
             |> getResponse
             |> run
            match result.statusCode with 
-            | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<FileMetaData> |> createSuccess 
+            | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<FileMetaData> |> createResponseObject 
             | 400 -> {Fail = Some(InvalidFilename); Pass = None}
             | 401 -> {Fail = Some(Unauthorized); Pass = None}
             | 404 -> {Fail = Some(NotFound); Pass = None}
@@ -89,11 +89,10 @@ module API =
                 |> getResponse
                 |> run
             match result.statusCode with 
-                | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<FileDeleted> |> createSuccess 
+                | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<FileDeleted> |> createResponseObject 
                 | 400 -> {Fail = Some(InvalidFilename); Pass = None}
                 | 401 -> {Fail = Some(Unauthorized); Pass = None}
                 | 404 -> {Fail = Some(NotFound); Pass = None}
-                | 409 -> {Fail = Some(Conflict); Pass = None}
                 | 500 -> {Fail = Some(UnknownError); Pass = None}
                 
        
@@ -103,7 +102,7 @@ module API =
              |> getResponse
              |> run
             match result.statusCode with 
-             | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<DirectoryMetaData> |> createSuccess 
+             | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<DirectoryMetaData> |> createResponseObject 
              | 400 -> {Fail = Some(InvalidFilename); Pass = None}
              | 401 -> {Fail = Some(Unauthorized); Pass = None}
              | 404 -> {Fail = Some(NotFound); Pass = None}

@@ -8,7 +8,7 @@
   <ItemGroup>
     <Compile Include="API.fs" />
     <Compile Include="Model.fs" />
-    <Compile Include="Utilities.fs" />
+    <Compile Include="ModelHelper.fs" />
     <Compile Include="Testing.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

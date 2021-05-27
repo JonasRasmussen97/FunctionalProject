@@ -57,9 +57,12 @@ module Testing =
                             | None, Some error -> model
                       member __.Check (api,model) =  
                         let apiResponse = API.createFile userId dirId name timeStamp
-                        match apiResponse.Pass, apiResponse.Fail with  
-                            | Some filecreation, None -> true.ToProperty()
-                            | None, Some error -> false.ToProperty() |@ sprintf "Create File Error: %O" error
+                        let modelResponse = Utilities.createFileModel model dirId userId name timeStamp
+                        match modelResponse.Pass, apiResponse.Pass, modelResponse.Fail, apiResponse.Fail with  
+                            | Some newModel, Some fileCreation, None, None -> true.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileCreation newModel 
+                            | None, None, Some modelError, Some apiError -> (modelError = apiError) |@ sprintf "Error: api=%A  Model=%A" apiError modelError
+                            | Some newModel, None, None, Some apiError -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiError newModel
+                            | None, Some fileCreation, Some modelError, None -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileCreation modelError
                        override __.ToString() = sprintf "createFile name=%s" name}
         
         let deleteFile userId fileId fileVersion = 
@@ -71,7 +74,13 @@ module Testing =
                            | Some newModel, None -> newModel
                            | None, Some error -> model
                       member __.Check (api,model) =  
-                        true.ToProperty()
+                        let modelResponse = Utilities.deleteFileModel model userId fileId  
+                        let apiResponse = API.deleteFile userId fileId fileVersion 
+                        match modelResponse.Pass, apiResponse.Pass, modelResponse.Fail, apiResponse.Fail with 
+                        | Some newModel, Some fileDeletion, None, None -> true.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileDeletion newModel 
+                        | None, None, Some modelError, Some apiError -> (modelError = apiError) |@ sprintf "Error: api=%A  Model=%A" apiError modelError
+                        | Some newModel, None, None, Some apiError -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiError newModel
+                        | None, Some fileDeletion, Some modelError, None -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileDeletion modelError
                        override __.ToString() = sprintf "deleteFile fileId=%i" fileId}
       
         let create  = 
@@ -98,13 +107,13 @@ module Testing =
                 let fileIdGen = Gen.frequency [(4,Gen.elements fileIds)]
                 let directoryIdGen =  Gen.elements directoryIds
                 let fileTimeStampGen = Gen.oneof[gen { return "123"}]
-                let filenameGen = Arb.generate<string> |> Gen.map (fun e -> e + ".txt")
+                let filenameGen = Arb.generate<string> |> Gen.map (fun e -> e + ".txt") 
                 
                 let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGen]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGen] 
                 let createFileGen = [Gen.map4 createFile userIdGen directoryIdGen filenameGen fileTimeStampGen]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGen fileIdGen fileVersionGen]
-                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen)
+                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen @ deleteFileGen)
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }

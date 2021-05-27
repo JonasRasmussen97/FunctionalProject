@@ -18,20 +18,29 @@ module Utilities =
         match result with 
             | Some file -> {Fail=None; Pass=Some(file)} 
             | None -> {Fail=Some(NotFound); Pass=None}
-        
+            
     let createFileModel (model:InModel) dirId userId name timeStamp = 
         let newFile = {id=model.currentFileId; version=1; versionChanged=1; name=name; parentId=dirId; timestamp=timeStamp}
         let fileAlreadyExistsInDir = 
-            let result = model.files |> List.tryFind (fun e -> (e.id = model.currentFileId && e.parentId = dirId))
+            let result = model.files |> List.tryFind (fun e -> (e.name = name))
             match result with 
             | Some file -> {Fail = Some(Conflict); Pass=None}
             | None -> {Fail = None; Pass = Some({model with files = newFile::model.files; currentFileId = model.currentFileId+1})} 
         fileAlreadyExistsInDir
             
     let deleteFileModel (model: InModel) userId fileId =
-        let newFiles = model.files |> List.filter(fun e -> e.id <> fileId)
-        {Fail= None; Pass=Some({model with files = newFiles})}
+        let fileExists = model.files |> List.tryFind (fun e -> e.id = fileId)
+        let fileExistsResult = match fileExists with 
+        | Some file -> true 
+        | None -> false
 
+        let newFiles = model.files |> List.filter(fun e -> e.id <> fileId)
+        let fileLength = newFiles.Length
+        match fileExistsResult, fileLength with 
+        | true, 0 -> {Fail = Some(NotFound); Pass=None}
+        | true, _ -> {Fail= None; Pass=Some({model with files = newFiles})}
+        | false, _ -> {Fail = Some(NotFound); Pass=None}
+            
     let getModelDirectoryById (list:API.DirectoryMetaData list) directoryId = 
         let result = list |> List.tryFind (fun e -> e.id = directoryId)
         match result with 
