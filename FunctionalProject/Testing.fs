@@ -8,6 +8,7 @@ open FunctionalProject.Model.Model
 open FsCheck
 open FunctionalProject.Utilities
 open System.Threading
+open Fare
 
 
 
@@ -30,9 +31,9 @@ module Testing =
                     let modelResponse = Utilities.getModelFileById model.files id
                     match apiResponse.Pass, modelResponse.Pass, apiResponse.Fail, modelResponse.Fail with 
                         | Some apiFile, Some modelFile, None, None -> (apiFile = modelFile).ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiResponse modelResponse 
-                        | None, None, Some apiError, Some modelError -> (apiError = modelError) |@ sprintf "Error: api=%A  Model=%A" apiError modelError
-                        | Some apiFile, None, None, Some modelError -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiFile modelError
-                        | None, Some modelFile, Some apiError, None -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiError modelFile
+                        | None, None, Some apiError, Some modelError -> (apiError = modelError) |@ sprintf "\nBoth have Error: api=%A  Model=%A" apiError modelError
+                        | Some apiFile, None, None, Some modelError -> false.ToProperty() |@ sprintf "\nModel has Error: api=%A  Model=%A" apiFile modelError
+                        | None, Some modelFile, Some apiError, None -> false.ToProperty() |@ sprintf "\nApi has Error: api=%A  Model=%A" apiError modelFile
                         | _ -> true.ToProperty() |@ sprintf "Error: api=%A  Model=%A Id=%i" apiResponse modelResponse id
                 override __.ToString() = sprintf "getFileMetaInformation fileId=%i" id}
         let getDirectoryMetaInformation id = 
@@ -107,13 +108,25 @@ module Testing =
                 let fileIdGen = Gen.frequency [(4,Gen.elements fileIds)] 
                 let directoryIdGen =  Gen.elements directoryIds
                 let fileTimeStampGen = Gen.oneof[gen { return "123"}]
-                let filenameGen = Gen.oneof[gen { return "abe.txt"}] 
-                
+                let randomVar = new Random()
+                let randomLength = randomVar.Next(0,50)
+                let createFileNameOf pattern =
+                    Gen.sized (fun size ->
+                        let xeger = Xeger pattern
+                        let count = if size < 1 then 1 else size
+                        [ for i in 1..count -> xeger.Generate() ]
+                        |> Gen.elements
+                        |> Gen.resize count)
+                let rec createPattern pattern count length output= 
+                    if(count < length) then
+                        createPattern pattern (count + 1) length (output+pattern)
+                    else
+                        output + "\.txt"
                 let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGen]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGen] 
-                let createFileGen = [Gen.map4 createFile userIdGen directoryIdGen filenameGen fileTimeStampGen]
+                let createFileGen = [Gen.map4 createFile userIdGen directoryIdGen (createFileNameOf (createPattern "[a-zA-Z0-9]" 0 randomLength "")) fileTimeStampGen]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGen fileIdGen fileVersionGen]
-                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen) 
+                Gen.oneof (fileMetaInformationGen @ createFileGen @ directoryMetaInformationGen) 
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }

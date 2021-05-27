@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Fare" Version="2.1.2" />
     <PackageReference Include="FsCheck" Version="2.15.3" />
     <PackageReference Include="FSharp.Json" Version="0.4.0" />
     <PackageReference Include="Http.fs" Version="5.4.0" />
