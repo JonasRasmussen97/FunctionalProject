@@ -104,16 +104,16 @@ module Testing =
                 let userIdGen = Gen.oneof [gen { return 0 }]
                 let fileVersionGen = Gen.oneof [gen {return 1}]
                 let randomIdGen = Gen.choose(0, 100);
-                let fileIdGen = Gen.frequency [(4,Gen.elements fileIds)]
+                let fileIdGen = Gen.frequency [(4,Gen.elements fileIds)] 
                 let directoryIdGen =  Gen.elements directoryIds
                 let fileTimeStampGen = Gen.oneof[gen { return "123"}]
-                let filenameGen = Arb.generate<string> |> Gen.map (fun e -> e + ".txt") 
+                let filenameGen = Gen.oneof[gen { return "abe.txt"}] 
                 
                 let fileMetaInformationGen = [Gen.map getFileMetaInformation fileIdGen]
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGen] 
                 let createFileGen = [Gen.map4 createFile userIdGen directoryIdGen filenameGen fileTimeStampGen]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGen fileIdGen fileVersionGen]
-                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen @ createFileGen @ deleteFileGen)
+                Gen.oneof (fileMetaInformationGen @ directoryMetaInformationGen) 
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }

@@ -62,7 +62,7 @@ module API =
                 |> getResponse
                 |> run
             match result.statusCode with 
-                | 200 -> {Fail = None; Pass = Some(Json.deserialize<FileCreation>)}
+                | 200 -> Response.readBodyAsString result |> run |> Json.deserialize<FileCreation> |> createResponseObject 
                 | 400 -> {Fail = Some(InvalidFilename); Pass = None}
                 | 401 -> {Fail = Some(Unauthorized); Pass = None}
                 | 404 -> {Fail = Some(NotFound); Pass = None}
