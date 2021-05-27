@@ -109,7 +109,8 @@ module Testing =
                 let directoryIdGen =  Gen.elements directoryIds
                 let fileTimeStampGen = Gen.oneof[gen { return "123"}]
                 let randomVar = new Random()
-                let randomLength = randomVar.Next(0,50)
+                let randomLength = randomVar.Next(1,50)
+                //credit: https://blog.nikosbaxevanis.com/2015/09/25/regex-constrained-strings-with-fscheck/
                 let createFileNameOf pattern =
                     Gen.sized (fun size ->
                         let xeger = Xeger pattern
