@@ -11,5 +11,6 @@ let from whom =
 
 [<EntryPoint>]
 let main argv =
+    let _ = System.Diagnostics.Process.Start("CMD.exe", "/C docker run -d --name orbit --rm -p8085:8085 -eCLICOLOR_FORCE=1 cr.orbit.dev/sdu/filesync-server:latest") 
     Testing.start
     0 // return an integer exit code

@@ -51,20 +51,20 @@ module Testing =
                 override __.ToString() = sprintf "getDirectoryMetaInformation dirId=%i" id}
         let createFile userId dirId name timeStamp = 
                     {new Operation<apiModel,InModel>() with
-                      member __.Run model = 
-                          let modelResponse = Utilities.createFileModel model dirId userId name timeStamp
-                          match modelResponse.Pass,modelResponse.Fail with  
-                            | Some m, None -> m 
-                            | None, Some error -> model
-                      member __.Check (api,model) =  
-                        let apiResponse = API.createFile userId dirId name timeStamp
-                        let modelResponse = Utilities.createFileModel model dirId userId name timeStamp
-                        match modelResponse.Pass, apiResponse.Pass, modelResponse.Fail, apiResponse.Fail with  
-                            | Some newModel, Some fileCreation, None, None -> true.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileCreation newModel 
-                            | None, None, Some modelError, Some apiError -> (modelError = apiError) |@ sprintf "Error: api=%A  Model=%A" apiError modelError
-                            | Some newModel, None, None, Some apiError -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiError newModel
-                            | None, Some fileCreation, Some modelError, None -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileCreation modelError
-                       override __.ToString() = sprintf "createFile name=%s" name}
+                        member __.Run model = 
+                            let modelResponse = Utilities.createFileModel model dirId userId name timeStamp
+                            match modelResponse.Pass,modelResponse.Fail with  
+                                | Some m, None -> m 
+                                | None, Some error -> model
+                        member __.Check (api,model) =  
+                            let apiResponse = API.createFile userId dirId name timeStamp
+                            let modelResponse = Utilities.createFileModel model dirId userId name timeStamp
+                            match modelResponse.Pass, apiResponse.Pass, modelResponse.Fail, apiResponse.Fail with  
+                                | Some newModel, Some fileCreation, None, None -> true.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileCreation newModel 
+                                | None, None, Some modelError, Some apiError -> (modelError = apiError) |@ sprintf "Error: api=%A  Model=%A" apiError modelError
+                                | Some newModel, None, None, Some apiError -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" apiError newModel
+                                | None, Some fileCreation, Some modelError, None -> false.ToProperty() |@ sprintf "Error: api=%A  Model=%A" fileCreation modelError
+                        override __.ToString() = sprintf "createFile name=%s" name}
         
         let deleteFile userId fileId fileVersion = 
                     {new Operation<apiModel,InModel>() with
@@ -87,17 +87,15 @@ module Testing =
         let create  = 
             { new Setup<apiModel,InModel>() with
                 member __.Actual() = 
-               (*  let dockerStartString = "/C docker run -d --name orbit --rm -p8085:8085 -eCLICOLOR_FORCE=1 cr.orbit.dev/sdu/filesync-server:latest"
-                 let dockerStopString = "/C docker stop orbit"
-                 Thread.Sleep 900
-                 System.Diagnostics.Process.Start("CMD.exe", dockerStopString) 
-                 Thread.Sleep 200
-                 System.Diagnostics.Process.Start("CMD.exe", dockerStartString) 
-                 Thread.Sleep 6000  *)
-                 new apiModel()
-                member __.Model() = Model.model 
+                    Thread.Sleep 2000
+                    let _ = System.Diagnostics.Process.Start("CMD.exe", "/C docker stop orbit")
+                    Thread.Sleep 1000
+                    let _ = System.Diagnostics.Process.Start("CMD.exe", "/C docker run -d --name orbit --rm -p8085:8085 -eCLICOLOR_FORCE=1 cr.orbit.dev/sdu/filesync-server:latest") 
+                    Thread.Sleep 6000 
+                    apiModel()
+                member __.Model() = Model.model
             }
-        { new Machine<apiModel,InModel>(20) with
+        { new Machine<apiModel,InModel>(200) with
             member __.Setup = create |> Gen.constant |> Arb.fromGen
             member __.Next model =
                 let fileIds = Utilities.getAllFileIds model.files
@@ -107,7 +105,7 @@ module Testing =
                 let randomIdGen = Gen.choose(0, 100);
                 let fileIdGen = Gen.frequency [(4,Gen.elements fileIds)] 
                 let directoryIdGen =  Gen.elements directoryIds
-                let fileTimeStampGen = Gen.oneof[gen { return "123"}]
+                let fileTimeStampGen = Gen.oneof[gen { return "621355969230000000"}]
                 let randomVar = new Random()
                 let randomLength = randomVar.Next(1,50)
                 //credit: https://blog.nikosbaxevanis.com/2015/09/25/regex-constrained-strings-with-fscheck/
@@ -127,10 +125,10 @@ module Testing =
                 let directoryMetaInformationGen = [Gen.map getDirectoryMetaInformation directoryIdGen] 
                 let createFileGen = [Gen.map4 createFile userIdGen directoryIdGen (createFileNameOf (createPattern "[a-zA-Z0-9]" 0 randomLength "")) fileTimeStampGen]
                 let deleteFileGen = [Gen.map3 deleteFile userIdGen fileIdGen fileVersionGen]
-                Gen.oneof (fileMetaInformationGen @ createFileGen @ directoryMetaInformationGen) 
+                Gen.oneof (createFileGen @ fileMetaInformationGen @ directoryMetaInformationGen) 
         }
 
-    //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1662852042 , 296892251)  }
+    //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1051876126 , 296895386)  }
     let config = {Config.Verbose with MaxTest = 1;  }
     let start = Check.One(config , StateMachine.toProperty spec)
 

@@ -4,12 +4,18 @@ open FunctionalProject.API
 
 module Model =
 
-    [<StructuredFormatDisplay("{currentFileId}")>]
+    [<StructuredFormatDisplay("{DisplayValue}")>]
     type InModel = {
         files: API.FileMetaData list
         directories : API.DirectoryMetaData list
         currentFileId: int
     }
+
+    type InModel with
+        override t.ToString() =
+            let files = (t.files |> List.map (fun e -> "\n[id:" + (string e.id) + " name:" + (string e.name) + " parentId:" + (string e.parentId) + "]"  )) |> List.fold (+) ""
+            sprintf "\nfiles:%s - currentFileId:%i" files t.currentFileId
+        member t.DisplayValue = t.ToString()
 
     // Defines the structure of the initial model
     let model = {
