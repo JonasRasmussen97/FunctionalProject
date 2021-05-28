@@ -12,9 +12,9 @@ module Model =
     }
 
     type InModel with
-        override t.ToString() =
-            let files = (t.files |> List.map (fun e -> "\n[id:" + (string e.id) + " name:" + (string e.name) + " parentId:" + (string e.parentId) + "]"  )) |> List.fold (+) ""
-            sprintf "\nfiles:%s - currentFileId:%i" files t.currentFileId
+        override printModel.ToString() =
+            let files = (printModel.files |> List.map (fun e -> "\n[id:" + (string e.id) + " name:" + (string e.name) + " parentId:" + (string e.parentId) + "]"  )) |> List.fold (+) ""
+            sprintf "\nfiles:%s - currentFileId:%i" files printModel.currentFileId
         member t.DisplayValue = t.ToString()
 
     // Defines the structure of the initial model

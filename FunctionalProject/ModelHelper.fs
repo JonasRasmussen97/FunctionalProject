@@ -7,8 +7,8 @@ open FunctionalProject.Model.Model
 
 module Utilities = 
 
-    let rec tryGetFileInSameDirWithSameName (list:FileMetaData list) fileName dirId = match list with
-        | file::files -> if (file.parentId <> dirId && file.name = fileName) then Some(file) else tryGetFileInSameDirWithSameName files fileName dirId
+    let rec checkIfFileExistsInDir (list:FileMetaData list) fileName dirId = match list with
+        | file::files -> if (file.parentId <> dirId && file.name = fileName) then Some(file) else checkIfFileExistsInDir files fileName dirId
         | [] -> None
 
     let getAllFileIds (list:API.FileMetaData list) = 
@@ -26,7 +26,7 @@ module Utilities =
     let createFileModel (model:InModel) dirId 0 name timeStamp = 
         let newFile = {id=model.currentFileId; version=1; versionChanged=1; name=name; parentId=dirId; timestamp=timeStamp}
         //let result = model.files |> List.tryFind (fun e -> if e.name = name && e.parentId = dirId then true else false)
-        let result = tryGetFileInSameDirWithSameName model.files name dirId
+        let result = checkIfFileExistsInDir model.files name dirId
         match result with 
             | Some file -> {Fail = Some(Conflict); Pass=None}
             | None -> {Fail = None; Pass = Some({model with files = newFile::model.files; currentFileId = model.currentFileId+1})} 
