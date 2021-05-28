@@ -95,7 +95,7 @@ module Testing =
                     apiModel()
                 member __.Model() = Model.model
             }
-        { new Machine<apiModel,InModel>(200) with
+        { new Machine<apiModel,InModel>(100) with
             member __.Setup = create |> Gen.constant |> Arb.fromGen
             member __.Next model =
                 let fileIds = Utilities.getAllFileIds model.files
@@ -129,7 +129,7 @@ module Testing =
         }
 
     //let config = {Config.Verbose with MaxTest = 1; Replay = Some <| Random.StdGen(1051876126 , 296895386)  }
-    let config = {Config.Verbose with MaxTest = 1;  }
+    let config = {Config.Verbose with MaxTest = 10;  }
     let start = Check.One(config , StateMachine.toProperty spec)
 
       

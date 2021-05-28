@@ -25,7 +25,6 @@ module Utilities =
             
     let createFileModel (model:InModel) dirId 0 name timeStamp = 
         let newFile = {id=model.currentFileId; version=1; versionChanged=1; name=name; parentId=dirId; timestamp=timeStamp}
-        //let result = model.files |> List.tryFind (fun e -> if e.name = name && e.parentId = dirId then true else false)
         let result = checkIfFileExistsInDir model.files name dirId
         match result with 
             | Some file -> {Fail = Some(Conflict); Pass=None}
