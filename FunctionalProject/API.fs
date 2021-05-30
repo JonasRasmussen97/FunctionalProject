@@ -40,9 +40,9 @@ module API =
         // Can be called by e.g. getFileById<id> if one parameter and getDirectoryById(<id1> <id2> <"name">) if multiple parameters.
         // Get Requests
         let fileMetaInformationById userId fileId = "http://localhost:8085/file/meta?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
-        let fileMetaInformationByName (userId: int, dirId: int, fileName: string) = "http://localhost:8085/file/meta?userId=" + string userId + "&parent_id=" + string dirId + "&name=" + string fileName |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
-        let downloadFile (userId: int, fileId: int) = "http://localhost:8085/file?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileContent>
-        let versionCheck (userId: int, ver: string) = "http://localhost:8085/version?userId=" + string userId + "&version=" + string ver |> Request.createUrl Get |> Request.responseAsString |> run
+        let fileMetaInformationByName userId dirId fileName = "http://localhost:8085/file/meta?userId=" + string userId + "&parent_id=" + string dirId + "&name=" + string fileName |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>  
+        let downloadFile userId fileId = "http://localhost:8085/file?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileContent>
+        let versionCheck userId ver = "http://localhost:8085/version?userId=" + string userId + "&version=" + string ver |> Request.createUrl Get |> Request.responseAsString |> run
       //let getFileMetaData userId fileId = "http://localhost:8085/api/files?userId=" + string userId + "&id=" + string fileId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<FileMetaData>
       //let getDirectoryMetaData userId dirId = "http://localhost:8085/api/directories?userId=" + string userId + "&id=" + string dirId |> Request.createUrl Get |> Request.responseAsString |> run |> Json.deserialize<DirectoryMetaData>
 
@@ -109,9 +109,9 @@ module API =
              | 409 -> {Fail = Some(Conflict); Pass = None}
              | 500 -> {Fail = Some(UnknownError); Pass = None}
 
-        let createFileAPI (userId: int) (dirId: int) (fileName: string) (timestamp: string) = "http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<FileCreation>
-        let moveFile (userId: int, fileId: int, version: int, parentId: int, newFileName: string) = "http://localhost:8085/file/move?userId=" + string userId + "&id=" + string fileId + "&version=" + string version + "&parentId=" + string parentId + "&name=" + newFileName |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<MoveFile>
-        let createDirectory (userId: int, parentId: int, dirName: string, version: int) = "http://localhost:8085/dir?userId=" + string userId + "&parentId=" + string parentId + "&name=" + dirName + "&version=" + string version |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<DirectoryCreation>
-        let moveDirectory (userId: int, dirId: int, version: int, name: string, parentDirId: int, parentDirVersion: int) = "http://localhost:8085/dir/move?userId=" + string userId + "&id=" + string dirId + "&version=" + string version + "&name=" + name + "&parentId=" + string parentDirId + "&parentVersion=" + string parentDirVersion |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<MoveDirectory>
+        let createFileAPI userId dirId fileName timestamp = "http://localhost:8085/file?userId=" + string userId + "&parentId=" + string dirId + "&name=" + string fileName + "&timestamp=" + string timestamp |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<FileCreation>
+        let moveFile userId fileId version parentId newFileName = "http://localhost:8085/file/move?userId=" + string userId + "&id=" + string fileId + "&version=" + string version + "&parentId=" + string parentId + "&name=" + newFileName |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<MoveFile>
+        let createDirectory userId parentId dirName version = "http://localhost:8085/dir?userId=" + string userId + "&parentId=" + string parentId + "&name=" + dirName + "&version=" + string version |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<DirectoryCreation>
+        let moveDirectory userId dirId version name parentDirId parentDirVersion = "http://localhost:8085/dir/move?userId=" + string userId + "&id=" + string dirId + "&version=" + string version + "&name=" + name + "&parentId=" + string parentDirId + "&parentVersion=" + string parentDirVersion |> Request.createUrl Post |> Request.responseAsString |> run |> Json.deserialize<MoveDirectory>
 
 
