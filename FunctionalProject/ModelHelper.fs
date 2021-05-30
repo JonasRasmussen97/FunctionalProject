@@ -7,9 +7,11 @@ open FunctionalProject.Model.Model
 
 module Utilities = 
 
-    let rec checkIfFileExistsInDir (list:FileMetaData list) fileName dirId = match list with
-        | file::files -> if (file.parentId <> dirId && file.name = fileName) then Some(file) else checkIfFileExistsInDir files fileName dirId
-        | [] -> None
+    let checkIfFileExistsInDir (list:FileMetaData list) fileName dirId = 
+        let result = list |> List.tryFind (fun e -> e.name = fileName && e.parentId <> dirId)
+        match result with 
+            | Some(file) -> Some(file) 
+            | None -> None
 
     let getAllFileIds (list:API.FileMetaData list) = 
         list |> List.map (fun e -> e.id)
